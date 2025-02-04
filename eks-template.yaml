@@ -1,0 +1,61 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Amazon Eks Cluster
+
+Resources:
+
+  EksCluster:
+    Type: AWS::EKS::Cluster
+    Properties:
+      Name: simple-eks-cluster
+      Version: '1.29'
+      RoleArn: arn:aws:iam::767398111149:role/EksClusterRole
+      KubernetesNetworkConfig:
+        IpFamily: ipv4
+        ServiceIpv4Cidr: 10.100.0.0/16
+      ResourcesVpcConfig:
+        SubnetIds:
+          - subnet-0089c3d2c71ba31b5
+          - subnet-0797ac68b6806d58e
+        SecurityGroupIds:
+          - sg-093c2cf5107b7b251
+        EndpointPublicAccess: true
+        EndpointPrivateAccess: true
+
+  EksNodeGroup:
+    Type: AWS::EKS::Nodegroup
+    DependsOn: EksCluster
+    Properties:
+      NodegroupName: simple-eks-nodegroup
+      ClusterName: simple-eks-cluster
+      NodeRole: arn:aws:iam::767398111149:role/AmazonEksNodeRole
+      CapacityType: SPOT
+      InstanceTypes:
+        - t3.medium
+        - t3.small
+      AmiType: AL2_x86_64
+      ScalingConfig:
+        MinSize: 1
+        DesiredSize: 1
+        MaxSize: 2
+      Subnets:
+        - subnet-0089c3d2c71ba31b5
+        - subnet-0797ac68b6806d58e
+      Version: '1.29'
+
+  KubeProxyAddon:
+    Type: AWS::EKS::Addon
+    DependsOn: EksCluster
+    Properties:
+      AddonName: kube-proxy
+      ClusterName: simple-eks-cluster
+      AddonVersion: v1.29.1-eksbuild.2
+      ResolveConflicts: OVERWRITE
+
+  VpcCNIAddon:
+    Type: AWS::EKS::Addon
+    DependsOn: EksCluster
+    Properties:
+      AddonName: vpc-cni
+      ClusterName: simple-eks-cluster
+      AddonVersion: v1.18.1-eksbuild.3
+      ResolveConflicts: OVERWRITE
