@@ -7,7 +7,7 @@ Resources:
     Type: AWS::EKS::Cluster
     Properties:
       Name: simple-eks-cluster
-      Version: '1.29'
+      Version: '1.30'
       RoleArn: arn:aws:iam::767398111149:role/EksClusterRole
       KubernetesNetworkConfig:
         IpFamily: ipv4
@@ -40,7 +40,7 @@ Resources:
       Subnets:
         - subnet-0089c3d2c71ba31b5
         - subnet-0797ac68b6806d58e
-      Version: '1.29'
+      Version: '1.30'
 
   KubeProxyAddon:
     Type: AWS::EKS::Addon
@@ -48,7 +48,7 @@ Resources:
     Properties:
       AddonName: kube-proxy
       ClusterName: simple-eks-cluster
-      AddonVersion: v1.29.1-eksbuild.2
+      AddonVersion: v1.30.6-eksbuild.3
       ResolveConflicts: OVERWRITE
 
   VpcCNIAddon:
@@ -57,5 +57,5 @@ Resources:
     Properties:
       AddonName: vpc-cni
       ClusterName: simple-eks-cluster
-      AddonVersion: v1.18.1-eksbuild.3
+      AddonVersion: v1.19.0-eksbuild.1
       ResolveConflicts: OVERWRITE
